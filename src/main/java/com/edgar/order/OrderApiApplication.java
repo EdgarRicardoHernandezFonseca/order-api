@@ -1,13 +1,13 @@
-package com.edgar.ordermanagemet;
+package com.edgar.order;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OrdermanagementApplication {
+public class OrderApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OrdermanagementApplication.class, args);
+		SpringApplication.run(OrderApiApplication.class, args);
 	}
 
 }
