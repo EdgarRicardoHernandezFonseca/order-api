@@ -2,6 +2,7 @@ package com.edgar.order.order.service;
 
 import com.edgar.order.common.exception.InsufficientStockException;
 import com.edgar.order.common.exception.ProductNotFoundException;
+import com.edgar.order.common.exception.CustomerNotFoundException;
 import com.edgar.order.customer.entity.Customer;
 import com.edgar.order.customer.repository.CustomerRepository;
 import com.edgar.order.order.dto.CreateOrderRequest;
@@ -33,7 +34,7 @@ public class OrderService {
 
         // 🔹 1. Validar cliente
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + request.getCustomerId()));
 
         // 🔹 2. Crear orden base
         Order order = Order.builder()
