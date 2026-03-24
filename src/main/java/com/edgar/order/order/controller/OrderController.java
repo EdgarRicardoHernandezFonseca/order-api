@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.Authentication;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class OrderController {
 	
 	private final OrderService orderService;
 	
+	@SecurityRequirement(name = "bearerAuth")
 	@PostMapping
 	public ResponseEntity<OrderResponse> createOrder(
 	        @RequestBody @Valid CreateOrderRequest request) {
@@ -35,6 +38,7 @@ public class OrderController {
 	    return ResponseEntity.ok(orderService.createOrder(request));
 	}
 	
+	@SecurityRequirement(name = "bearerAuth")
 	@PutMapping("/{id}/status")
 	public ResponseEntity<OrderResponse> updateStatus(
 	        @PathVariable Long id,
