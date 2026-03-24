@@ -31,9 +31,10 @@ public class OrderController {
 	@SecurityRequirement(name = "bearerAuth")
 	@PostMapping
 	public ResponseEntity<OrderResponse> createOrder(
-	        @RequestBody @Valid CreateOrderRequest request) {
-		
-		String username = authentication.getName();
+	        @RequestBody @Valid CreateOrderRequest request,
+	        Authentication authentication) {
+
+	    String username = authentication.getName();
 
 	    return ResponseEntity.ok(orderService.createOrder(request));
 	}

@@ -82,6 +82,7 @@ public class OrderService {
         order.setTotalAmount(total);
 
         // 🔹 5. Guardar orden (cascade guarda items)
+        orderRepository.save(order);
         return OrderMapper.toResponse(order);
     }
     
@@ -89,21 +90,24 @@ public class OrderService {
     public OrderResponse updateOrderStatus(Long id, OrderStatus status) {
 
         // 🔹 1. Buscar orden
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         OrderStatus currentStatus = order.getStatus();
 
         // 🔹 2. Validar transición
-        validateStatusTransition(currentStatus, newStatus);
+        validateStatusTransition(currentStatus, status);
 
-        // 🔹 3. Lógica adicional según estado
-        if (newStatus == OrderStatus.CANCELLED) {
+        // 🔹 3. Lógica adicional
+        if (status == OrderStatus.CANCELLED) {
             restoreStock(order);
         }
 
         // 🔹 4. Actualizar estado
-        order.setStatus(newStatus);
+        order.setStatus(status);
+
+        // 🔹 5. Guardar (opcional pero recomendado)
+        orderRepository.save(order);
 
         return OrderMapper.toResponse(order);
     }
