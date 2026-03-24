@@ -17,6 +17,8 @@ import com.edgar.order.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.core.Authentication;
+
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -27,6 +29,8 @@ public class OrderController {
 	@PostMapping
 	public ResponseEntity<OrderResponse> createOrder(
 	        @RequestBody @Valid CreateOrderRequest request) {
+		
+		String username = authentication.getName();
 
 	    return ResponseEntity.ok(orderService.createOrder(request));
 	}
