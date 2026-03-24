@@ -1,11 +1,12 @@
-package com.edgar.order.entity;
+package com.edgar.order.order.entity;
 
-import com.edgar.order.entity.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.math.BigDecimal;
+
+import com.edgar.order.product.entity.Product;
 
 @Entity
 @Table(name = "order_items")

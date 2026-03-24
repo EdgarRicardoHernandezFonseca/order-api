@@ -1,6 +1,5 @@
-package com.edgar.order.entity;
+package com.edgar.order.order.entity;
 
-import com.edgar.order.entity.Customer;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.edgar.order.customer.entity.Customer;
 
 @Entity
 @Table(name = "orders")

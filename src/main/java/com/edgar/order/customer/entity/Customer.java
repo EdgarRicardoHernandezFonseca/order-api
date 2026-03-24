@@ -1,4 +1,4 @@
-package com.edgar.order.entity;
+package com.edgar.order.customer.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.edgar.order.order.entity.Order;
 
 @Entity
 @Table(name = "customers")

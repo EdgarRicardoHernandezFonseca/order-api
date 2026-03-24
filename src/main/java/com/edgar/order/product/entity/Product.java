@@ -1,4 +1,4 @@
-package com.edgar.order.entity;
+package com.edgar.order.product.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
