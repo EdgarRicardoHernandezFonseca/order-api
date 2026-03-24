@@ -78,4 +78,62 @@ public class OrderService {
         // 🔹 5. Guardar orden (cascade guarda items)
         return orderRepository.save(order);
     }
+    
+    @Transactional
+    public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
+
+        // 🔹 1. Buscar orden
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        OrderStatus currentStatus = order.getStatus();
+
+        // 🔹 2. Validar transición
+        validateStatusTransition(currentStatus, newStatus);
+
+        // 🔹 3. Lógica adicional según estado
+        if (newStatus == OrderStatus.CANCELLED) {
+            restoreStock(order);
+        }
+
+        // 🔹 4. Actualizar estado
+        order.setStatus(newStatus);
+
+        return orderRepository.save(order);
+    }
+    
+    private void validateStatusTransition(OrderStatus current, OrderStatus next) {
+
+        if (current == OrderStatus.CANCELLED) {
+            throw new RuntimeException("Cannot modify a cancelled order");
+        }
+
+        if (current == OrderStatus.SHIPPED) {
+            throw new RuntimeException("Cannot modify a shipped order");
+        }
+
+        if (current == OrderStatus.CREATED && next == OrderStatus.SHIPPED) {
+            throw new RuntimeException("Order must be paid before shipping");
+        }
+
+        if (current == OrderStatus.PAID && next == OrderStatus.CREATED) {
+            throw new RuntimeException("Cannot revert a paid order");
+        }
+    }
+    
+    private void restoreStock(Order order) {
+
+        for (OrderItem item : order.getItems()) {
+            Product product = item.getProduct();
+            product.setStock(product.getStock() + item.getQuantity());
+        }
+    }
+    
+    private boolean isValidTransition(OrderStatus current, OrderStatus next) {
+        return switch (current) {
+            case CREATED -> next == OrderStatus.PAID || next == OrderStatus.CANCELLED;
+            case PAID -> next == OrderStatus.SHIPPED || next == OrderStatus.CANCELLED;
+            default -> false;
+        };
+    }
 }
