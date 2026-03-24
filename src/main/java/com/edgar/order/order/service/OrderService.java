@@ -1,5 +1,7 @@
 package com.edgar.order.order.service;
 
+import com.edgar.order.common.exception.InsufficientStockException;
+import com.edgar.order.common.exception.ProductNotFoundException;
 import com.edgar.order.customer.entity.Customer;
 import com.edgar.order.customer.repository.CustomerRepository;
 import com.edgar.order.order.dto.CreateOrderRequest;
@@ -47,11 +49,13 @@ public class OrderService {
         for (OrderItemRequest itemRequest : request.getItems()) {
 
             Product product = productRepository.findById(itemRequest.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
+                    .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
             // 🔴 Validar stock
             if (product.getStock() < itemRequest.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+                throw new InsufficientStockException(
+                	    "Insufficient stock for product: " + product.getName()
+                		);
             }
 
             // 🔹 Crear item
