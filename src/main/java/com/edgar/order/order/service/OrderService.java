@@ -4,7 +4,9 @@ import com.edgar.order.customer.entity.Customer;
 import com.edgar.order.customer.repository.CustomerRepository;
 import com.edgar.order.order.dto.CreateOrderRequest;
 import com.edgar.order.order.dto.OrderItemRequest;
+import com.edgar.order.order.dto.OrderResponse;
 import com.edgar.order.order.entity.*;
+import com.edgar.order.order.mapper.OrderMapper;
 import com.edgar.order.order.repository.OrderRepository;
 import com.edgar.order.product.entity.Product;
 import com.edgar.order.product.repository.ProductRepository;
@@ -25,7 +27,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public Order createOrder(CreateOrderRequest request) {
+    public OrderResponse createOrder(CreateOrderRequest request) {
 
         // 🔹 1. Validar cliente
         Customer customer = customerRepository.findById(request.getCustomerId())
@@ -76,11 +78,11 @@ public class OrderService {
         order.setTotalAmount(total);
 
         // 🔹 5. Guardar orden (cascade guarda items)
-        return orderRepository.save(order);
+        return OrderMapper.toResponse(order);
     }
     
     @Transactional
-    public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
+    public OrderResponse updateOrderStatus(Long id, OrderStatus status) {
 
         // 🔹 1. Buscar orden
         Order order = orderRepository.findById(orderId)
@@ -99,7 +101,7 @@ public class OrderService {
         // 🔹 4. Actualizar estado
         order.setStatus(newStatus);
 
-        return orderRepository.save(order);
+        return OrderMapper.toResponse(order);
     }
     
     private void validateStatusTransition(OrderStatus current, OrderStatus next) {
