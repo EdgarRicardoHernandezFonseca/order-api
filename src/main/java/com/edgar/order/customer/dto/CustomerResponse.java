@@ -1,4 +1,4 @@
-package com.edgar.order.order.dto;
+package com.edgar.order.customer.dto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,5 +1,6 @@
 package com.edgar.order.order.dto;
 
+import com.edgar.order.customer.dto.CustomerResponse;
 import com.edgar.order.order.entity.OrderStatus;
 import lombok.Builder;
 import lombok.Data;
