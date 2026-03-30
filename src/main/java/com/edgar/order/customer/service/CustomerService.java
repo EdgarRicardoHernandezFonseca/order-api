@@ -2,6 +2,11 @@ package com.edgar.order.customer.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.edgar.order.common.exception.CustomerNotFoundException;
@@ -9,6 +14,7 @@ import com.edgar.order.customer.dto.CreateCustomerRequest;
 import com.edgar.order.customer.dto.CustomerResponse;
 import com.edgar.order.customer.entity.Customer;
 import com.edgar.order.customer.repository.CustomerRepository;
+import com.edgar.order.customer.repository.CustomerSpecification;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,11 +40,16 @@ public class CustomerService {
         return mapToResponse(customer);
     }
 
-    public List<CustomerResponse> getAll() {
-        return repository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+    public Page<CustomerResponse> getAll(int page, int size, String sortBy, String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return repository.findAll(pageable)
+                .map(this::mapToResponse);
     }
 
     private CustomerResponse mapToResponse(Customer customer) {
@@ -47,5 +58,28 @@ public class CustomerService {
                 .name(customer.getName())
                 .email(customer.getEmail())
                 .build();
+    }
+    
+    public Page<CustomerResponse> search(String name, Pageable pageable) {
+
+        Page<Customer> result;
+
+        if (name != null && !name.isEmpty()) {
+            result = repository.findByNameContainingIgnoreCase(name, pageable);
+        } else {
+            result = repository.findAll(pageable);
+        }
+
+        return result.map(this::mapToResponse);
+    }
+    
+    public Page<CustomerResponse> search(String name, String email, Pageable pageable) {
+
+        Specification<Customer> spec = Specification
+                .where(CustomerSpecification.hasName(name))
+                .and(CustomerSpecification.hasEmail(email));
+
+        return repository.findAll(spec, pageable)
+                .map(this::mapToResponse);
     }
 }
