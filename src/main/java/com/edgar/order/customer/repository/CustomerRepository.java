@@ -12,4 +12,12 @@ public interface CustomerRepository extends
 		JpaSpecificationExecutor<Customer> {
 	
 	Page<Customer> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    Page<Customer> findByEmailContainingIgnoreCase(String email, Pageable pageable);
+
+    Page<Customer> findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(
+            String name,
+            String email,
+            Pageable pageable
+    );
 }

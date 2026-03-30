@@ -13,6 +13,7 @@ import com.edgar.order.common.exception.CustomerNotFoundException;
 import com.edgar.order.customer.dto.CreateCustomerRequest;
 import com.edgar.order.customer.dto.CustomerResponse;
 import com.edgar.order.customer.entity.Customer;
+import com.edgar.order.customer.mapper.CustomerMapper;
 import com.edgar.order.customer.repository.CustomerRepository;
 import com.edgar.order.customer.repository.CustomerSpecification;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomerService {
 
     private final CustomerRepository repository;
+    private final CustomerMapper mapper; 
 
     public CustomerResponse create(CreateCustomerRequest request) {
         Customer customer = Customer.builder()
@@ -60,26 +62,28 @@ public class CustomerService {
                 .build();
     }
     
-    public Page<CustomerResponse> search(String name, Pageable pageable) {
-
-        Page<Customer> result;
-
-        if (name != null && !name.isEmpty()) {
-            result = repository.findByNameContainingIgnoreCase(name, pageable);
-        } else {
-            result = repository.findAll(pageable);
-        }
-
-        return result.map(this::mapToResponse);
-    }
-    
     public Page<CustomerResponse> search(String name, String email, Pageable pageable) {
 
-        Specification<Customer> spec = Specification
-                .where(CustomerSpecification.hasName(name))
-                .and(CustomerSpecification.hasEmail(email));
+        if (name != null && email != null) {
+            return repository
+                    .findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(name, email, pageable)
+                    .map(mapper::toResponse);
+        }
 
-        return repository.findAll(spec, pageable)
-                .map(this::mapToResponse);
+        if (name != null) {
+            return repository
+                    .findByNameContainingIgnoreCase(name, pageable)
+                    .map(mapper::toResponse);
+        }
+
+        if (email != null) {
+            return repository
+                    .findByEmailContainingIgnoreCase(email, pageable)
+                    .map(mapper::toResponse);
+        }
+
+        return repository
+                .findAll(pageable)
+                .map(mapper::toResponse);
     }
 }

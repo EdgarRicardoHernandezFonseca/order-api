@@ -53,18 +53,7 @@ public class CustomerController {
                 service.getAll(page, size, sortBy, direction)
         );
     }
-    
-    @GetMapping("/search")
-    public ResponseEntity<Page<CustomerResponse>> search(
-            @RequestParam(required = false) String name,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        return ResponseEntity.ok(service.search(name, pageable));
-    }
-    
+        
     @GetMapping("/search")
     public ResponseEntity<Page<CustomerResponse>> search(
             @RequestParam(required = false) String name,
